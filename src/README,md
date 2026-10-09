@@ -1,0 +1,125 @@
+# Grain v1 Stream Cipher
+
+A C implementation project for studying the Grain v1 stream cipher.
+
+## 1. Introduction
+
+Grain v1 is a synchronous stream cipher designed for lightweight cryptographic applications. It generates a keystream from a secret key and an initialization vector (IV).
+
+This project implements a basic Grain v1 program in C and runs it on Ubuntu Linux.
+
+## 2. Project Objectives
+
+* Study the operating principle of the Grain v1 stream cipher.
+* Implement the algorithm using the C programming language.
+* Generate a keystream from a key and an IV.
+* Compile and run the program using GCC.
+* Test the implementation against official reference test vectors.
+
+## 3. Algorithm Overview
+
+Grain v1 uses the following parameters:
+
+| Parameter                  |    Size |
+| -------------------------- | ------: |
+| Secret key                 | 80 bits |
+| Initialization vector (IV) | 64 bits |
+| LFSR                       | 80 bits |
+| NFSR                       | 80 bits |
+| Initialization clocks      |     160 |
+
+The cipher combines a Linear Feedback Shift Register (LFSR), a Nonlinear Feedback Shift Register (NFSR), and an output function to generate the keystream.
+
+For encryption and decryption, the keystream is XORed with the input data.
+
+## 4. Project Structure
+
+```text
+Grain-v1-Stream-Cipher/
+├── src/
+│   ├── grain.h
+│   ├── grain.c
+│   └── main.c
+├── tests/
+│   └── test_grain.c
+├── README.md
+├── Makefile
+└── .gitignore
+```
+
+* `src/grain.h`: Function declarations and state structure.
+* `src/grain.c`: Grain v1 algorithm implementation.
+* `src/main.c`: Main program for generating a keystream.
+* `tests/test_grain.c`: Basic test program.
+* `Makefile`: Build and test commands.
+
+## 5. Requirements
+
+* Ubuntu Linux
+* GCC compiler
+* GNU Make
+* Visual Studio Code (optional)
+
+Install the required build tools:
+
+```bash
+sudo apt update
+sudo apt install build-essential
+```
+
+## 6. Build and Run
+
+Open a terminal in the project directory.
+
+Build the main program:
+
+```bash
+make
+```
+
+Run the program:
+
+```bash
+./grain
+```
+
+Run the basic test:
+
+```bash
+make test
+```
+
+Remove generated executables:
+
+```bash
+make clean
+```
+
+## 7. Testing
+
+The current test program generates a keystream using an all-zero key and an all-zero IV.
+
+A successful build confirms that the source code compiles. It does not, by itself, prove that the implementation conforms to the Grain v1 specification.
+
+The output must be compared with an authoritative Grain v1 reference test vector before the implementation can be considered verified.
+
+## 8. Team Information
+
+Course: Digital Communications / Stream Cipher Project
+
+Algorithm: Grain v1
+
+Language: C
+
+Operating System: Ubuntu Linux
+
+Team members: DaoTatHiep-20233390
+
+## 9. References
+
+* eSTREAM project: https://www.ecrypt.eu.org/stream/
+* Grain stream cipher reference material: https://cr.yp.to/streamciphers/grain/desc.pdf
+
+## 10. Disclaimer
+
+This project is intended for educational purposes. Do not use this implementation for protecting real-world sensitive information without proper review and verification.
