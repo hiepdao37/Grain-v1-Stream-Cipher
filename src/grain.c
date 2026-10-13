@@ -9,7 +9,7 @@
  * LFSR and NFSR: 80 bits each
  */
 
-/* Output function h(x) */
+/* Output filter function h(x) */
 static uint8_t output_h(const GrainState *g)
 {
     const uint8_t *s = g->lfsr;
@@ -21,18 +21,24 @@ static uint8_t output_h(const GrainState *g)
     uint8_t x3 = s[64];
     uint8_t x4 = b[63];
 
-    return x0 ^ x1 ^ x2 ^ x3 ^ x4
-        ^ (x1 & x4)
+    return x1 ^ x4
         ^ (x0 & x3)
         ^ (x2 & x3)
         ^ (x3 & x4)
         ^ (x0 & x1 & x2)
-        ^ (x0 & x2 & x3)
-        ^ (x0 & x2 & x4)
+        ^ (x1 & x2 & x3)
         ^ (x1 & x2 & x4)
         ^ (x2 & x3 & x4);
 }
+/* Complete Grain v1 output function */
+static uint8_t output_bit(const GrainState *g)
+{
+    const uint8_t *b = g->nfsr;
 
+    return b[1] ^ b[2] ^ b[4]
+         ^ b[10] ^ b[31] ^ b[43] ^ b[56]
+         ^ output_h(g);
+}
 /* Feedback function of LFSR */
 static uint8_t lfsr_feedback(const GrainState *g)
 {
@@ -88,10 +94,8 @@ void grain_init(GrainState *g,
     }
 
     /* 160 initialization clocks */
-    for (int i = 0; i < 160; i++) {
-        uint8_t z = output_h(g)
-                  ^ g->nfsr[0]
-                  ^ g->lfsr[0];
+        for (int i = 0; i < 160; i++) {
+        uint8_t z = output_bit(g);
 
         uint8_t new_n = nfsr_feedback(g) ^ g->lfsr[0] ^ z;
         uint8_t new_s = lfsr_feedback(g) ^ z;
@@ -104,7 +108,7 @@ void grain_init(GrainState *g,
 /* Generate one keystream bit */
 uint8_t grain_next_bit(GrainState *g)
 {
-    uint8_t z = output_h(g);
+    uint8_t z = output_bit(g);
 
     uint8_t new_n = nfsr_feedback(g) ^ g->lfsr[0];
     uint8_t new_s = lfsr_feedback(g);
@@ -114,7 +118,6 @@ uint8_t grain_next_bit(GrainState *g)
 
     return z & 1;
 }
-
 /* Generate bit_count keystream bits, packed MSB first */
 void grain_keystream(GrainState *g,
                      uint8_t *out,
